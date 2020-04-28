@@ -20,12 +20,12 @@ Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 O bot é dividido em x módulos:
 - [ImgGeter](#ImgGeter) 
 - [Croper](#Croper)
-- [Recognizer](/#Recognizer)
-- [GetWeather](/#GetWeather)
+- [Recognizer](#Recognizer)
+- [GetWeather](#GetWeather)
 
 Esses módulos podem ser orquestrados de duas formas:
-- [orquestrador-web](/#web) 
-- [orquestrador-cron](/#cron)
+- [orquestrador-web](#web) 
+- [orquestrador-cron](#cron)
 
 ## ImgGeter
 
