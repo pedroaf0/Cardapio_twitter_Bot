@@ -18,14 +18,14 @@ Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 # indice
 ### módulos
 O bot é dividido em x módulos:
-- [ImgGeter]() 
-- [Croper]()
-- [Recognizer]()
-- [GetWeather]()
+- [ImgGeter](/#ImgGeter) 
+- [Croper](/#Croper)
+- [Recognizer](/#Recognizer)
+- [GetWeather](/#GetWeather)
 
 Esses módulos podem ser orquestrados de duas formas:
-- [orquestrador-web]() 
-- [orquestrador-cron]()
+- [orquestrador-web](/#web) 
+- [orquestrador-cron](/#cron)
 
 ## ImgGeter
 
