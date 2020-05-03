@@ -17,11 +17,13 @@ Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 
 # indice
 ### módulos
-O bot é dividido em x módulos:
+O bot é dividido em 5 módulos:
+
 - [ImgGeter](#ImgGeter) 
 - [Croper](#Croper)
 - [Recognizer](#Recognizer)
 - [GetWeather](#GetWeather)
+- [twitterTimeline](#twitterTimeline)
 
 Esses módulos podem ser orquestrados de duas formas:
 - [orquestrador-web](#web) 
@@ -100,7 +102,12 @@ await tesseract.recognize(`img/croped/${name}.jpg`, {lang:  "eng",oem:  1,psm:  
 .then(text  => {t =  corrigir(text)})
 return t
 }
-
+```
+A função ``corrigir(text)`` recebe uma string toda bagunçada e a divide em uma matriz de substrings com base na quebra de linha representada digitalmente por ``\r\n`` depois filtra a matriz com base na matriz de exclusão usando o [string-similarity](www.npmjs.com/package/string-similarity)
+```json
+excluir = [ '','   ','\f','a'];
+```
+```javascript
 function  corrigir(text){
 	const r = text.split("\r\n")
 	const fil = r.filter(v  => {
@@ -111,6 +118,9 @@ function  corrigir(text){
 	}
 	return  true
 });
+```
+e por fim ele substitui as palavras com algum erro de reconhecimento por uma palavra parecida na matriz de palavras esperadas também usando o [string-similarity](www.npmjs.com/package/string-similarity)
+```javascript
 for(var i =  0; i<fil.length; i++){
 	for(var v =  0; v<esperado.length; v++) {
 		if(ss.compareTwoStrings(fil[i], esperado[v]) >  0.3) {
@@ -151,7 +161,7 @@ ConditionToEmoji = {
 ```
 # Orquestradores
 ### web
-Utiliza o http e o express para fazer um servidor padrão e dispara as funções conforme a rota acessada + token de usando o [cron-job.org](https://cron-job.org/)
+Utiliza o http e o express para fazer um servidor padrão e dispara as funções conforme a rota acessada e agenda os posts com o [cron-job.org](https://cron-job.org/)
 
 ![Capturar](https://user-images.githubusercontent.com/54213349/80440021-33b77600-88de-11ea-9293-5d3ec17a6fde.PNG)
 
@@ -208,7 +218,7 @@ server.listen(port); // inicia o server padrão
 ```
 
 ### Cron
-Utilisa o [Node-cron](https://www.npmjs.com/package/node-cron) para agendar os post
+Utiliza o [Node-cron](https://www.npmjs.com/package/node-cron) para agendar os post
 ```javascript
 //require tudo
 
