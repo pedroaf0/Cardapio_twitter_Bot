@@ -45,14 +45,28 @@ async function recognizee(name){
       }
       return true
     });
-
-    for(var i = 0; i<fil.length; i++){
-        for(var v = 0; v<esperado.length; v++) {
-            if(ss.compareTwoStrings(fil[i], esperado[v]) > 0.3) {
-                fil.splice(i, 1, esperado[v]);
-            }
+    const por = [0.9,0.5,0.3,0.2,0.1];
+    var t = [];
+for (var p = 0; p < por.length; p++) {
+  comparepor(fil , por[p]);
+}
+    function comparepor(fil, por) {
+      for (var i = 0; i < fil.length; i++) {
+        if (compareateachar(fil[i], por)) {
+          t.push(compareateachar(fil[i], por));
+          fil.splice(i, 1);
+          i--;
         }
+      }
     }
-  return fil;
-  }
 
+    function compareateachar(fil, por) {
+      for (var v = 0; v < esperado.length; v++) {
+        if (ss.compareTwoStrings(fil, esperado[v]) > por) {
+          return esperado[v];
+        }
+      }
+      return false;
+    }
+    return t;
+  }
