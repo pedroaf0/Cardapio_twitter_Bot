@@ -26,7 +26,7 @@ module.exports.recognize = async function recognize() {
 
 async function recognizee(name){
   var t;
- await tesseract.recognize(`img/croped/${name}.jpg`, {lang: "eng",oem: 1,psm: 3})
+ await tesseract.recognize(`./img/croped/${name}.jpg`, {lang: "eng",tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyz "})
   .then(text => {
      t = corrigir(text)
     })
