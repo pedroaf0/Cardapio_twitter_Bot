@@ -29,7 +29,7 @@ async function recognizee(name){
   var t;
   console.log(`./img/croped/${name}.jpg`)
   console.log(resolve(`./img/croped/${name}.jpg`))
- await tesseract.recognize(resolve(`./img/croped/${name}.jpg`), {lang: "eng",tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyz "})
+ await tesseract.recognize(resolve(`./img/croped/${name}.jpg`), {lang: "eng",oem: 1,psm: 3})
   .then(text => {
      t = corrigir(text)
     })
