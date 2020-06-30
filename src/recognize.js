@@ -1,4 +1,5 @@
 const tesseract = require("node-tesseract-ocr");
+const {resolve} = require("path");
 const fs = require('fs');
 
 var ss = require('string-similarity');
@@ -26,7 +27,9 @@ module.exports.recognize = async function recognize() {
 
 async function recognizee(name){
   var t;
- await tesseract.recognize(`../img/croped/${name}.jpg`, {lang: "eng",tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyz "})
+  console.log(`./img/croped/${name}.jpg`)
+  console.log(resolve(`./img/croped/${name}.jpg`))
+ await tesseract.recognize(resolve(`./img/croped/${name}.jpg`), {lang: "eng",tessedit_char_whitelist: "abcdefghijklmnopqrstuvwxyz "})
   .then(text => {
      t = corrigir(text)
     })
