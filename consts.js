@@ -2,7 +2,7 @@ module.exports.esperado = ['Cachorro quente','Arroz/Feijão', 'Frango ao molho',
 module.exports.days = ['Segunda','Terça','Quarta','Quinta','Sexta'];
 module.exports.daysBrev = ['Seg','Ter','Qua','Qui','Sex'];
 
-module.exports.ref = ['Almoco', 'Janta'];
+module.exports.ref = ['Almoço', 'Janta'];
 module.exports.excluir = [ '','   ','\f','a'];
 module.exports.ConditionToEmoji =  {
                                                 "cloudly_day": "⛅",
