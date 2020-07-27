@@ -5,7 +5,7 @@ var fs = require('fs');
 module.exports.ImgGet = ()=> new Promise((re,err)=>{
 request("https://ifrs.edu.br/sertao/wp-json/wp/v2/media?search=cardapio", function (error, response, body) {
    console.log(JSON.parse(body)[0].guid.rendered)
-   download(JSON.parse(body)[0].guid.rendered, './img/original/img.jpg', re)
+   download(JSON.parse(body)[0].guid.rendered, './img/original/img.jpg', () => re(JSON.parse(body)[0].guid.rendered))
 
 })
 })
@@ -22,5 +22,6 @@ const download = function(url, dest, cb) {
     if (cb) cb(err.message);
   });
 };
+
 
 
