@@ -2,9 +2,11 @@ const http = require("http");
 const express = require("express");
 const fs = require('fs');
 
+const { Post, PostImg } = require('../libs/twitterTimeline');
+const { SendMessage, sendPhoto } = require('../libs/Telegram');
+
 const dateFormat = require('dateformat');
 const { days, ref } = require('../consts');
-const { Post, PostImg } = require('../twitterTimeline');
 const { crop } = require('./croper');
 const { recognize } = require('./recognize');
 const { ImgGet } = require('./ImgGet');
@@ -29,51 +31,33 @@ app.get('/',async (req, res) => {
  });
  app.get('/new/'+process.env.SECRET_TOKEN,async (req, res) => {
     res.write('');
-    await ImgGet()
+    const imgLink = await ImgGet()
     await crop();
     await recognize();
     const prev = await GetWeather();
-    await PostImg(
-`Bom dia!
-prontos pra mais uma semana?
-essa é a previsão do tempo para essa semana:
-${prev}
-E como sempre o cardapio dessa semana:
-`
-      ,'./img/original/img.jpg'
-    )   
- res.write( `Bom dia!
-prontos pra mais uma semana?
-essa é a previsão do tempo para essa semana:
-${prev}
-E como sempre o cardapio dessa semana:
-` ); 
-res.end();
+    const message =`Bom dia!\nprontos pra mais uma semana?\nessa é a previsão do tempo para essa semana:\n${prev}\nE como sempre o cardapio dessa semana:`
+    await PostImg(message,'./img/original/img.jpg') 
+    res.write(message); 
+    res.end();
+
+    await SendMessage(message);
+    await sendPhoto(imgLink);
    });
  app.get('/almoco/'+process.env.SECRET_TOKEN,async (req, res) => {
-    Post(
-`${ref[0]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n
-${GetText(0, dateFormat('',"N")-1)}
-`
-      )
-    res.write( 
-`${ref[0]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n
-${GetText(0, dateFormat('',"N")-1)}
-` ); 
-        res.end();
+    const message = `${ref[0]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n`+
+                    `${GetText(0, dateFormat('',"N")-1)}`
+    await Post(message)
+    await SendMessage(message);
+    res.write(message); 
+    res.end();
 });
 
 app.get('/janta/'+process.env.SECRET_TOKEN,async (req, res) => {
-    Post(
-`${ref[1]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n
-${GetText(1, dateFormat('',"N")-1)}
-`
-      )
-    res.write( 
-`${ref[1]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n
-${GetText(1, dateFormat('',"N")-1)}
-` ); 
-        res.end();
+    const message = `${ref[1]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n`+
+                    `${GetText(1, dateFormat('',"N")-1)}`
+    Post(message)
+    res.write(message); 
+    res.end();
 });
 
 function GetText(refN, dayN){
