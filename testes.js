@@ -11,3 +11,5 @@ const { recognize } = require('./src/recognize');
 
 const { GetWeather } = require('./src/GetWeather');
 //GetWeather()
+
+const { SendMessage, sendPhoto } = require('./libs/Telegram');
