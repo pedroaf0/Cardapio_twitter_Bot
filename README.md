@@ -5,10 +5,6 @@
   <a href="https://twitter.com/Cardapio_IF_bot">
     <img src='https://img.shields.io/twitter/url?label=%40Cardapio_IF_bot&url=https%3A%2F%2Ftwitter.com%2FCardapio_IF_bot'></img>
   </a>
-
-  <a href="https://gitlab.sertao.ifrs.edu.br/2019309735/Cardapio-Bot">
-    <img src='https://img.shields.io/badge/%20%20view%20it%20on-gitlab.sertão.ifrs.edu.br-orange?logo=gitlab'></img>
-  </a>
   <img src="https://img.shields.io/badge/heroku-success-green?logo=heroku"></img> <br>
 Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 </p>
@@ -17,37 +13,32 @@ Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 
 # indice
 ### módulos
-O bot é dividido em 5 módulos:
+O bot é dividido em 4 módulos:
 
 - [ImgGeter](#ImgGeter) 
 - [Croper](#Croper)
 - [Recognizer](#Recognizer)
+
+### Bibliotecas reutilizáveis
+
 - [GetWeather](#GetWeather)
 - [twitterTimeline](#twitterTimeline)
+- [Telegram.js](#Telegram)
 
 Esses módulos podem ser orquestrados de duas formas:
-- [orquestrador-web](#web) 
-- [orquestrador-cron](#cron)
+
+- [orquestrador-web](#web)
 
 ## ImgGeter
 
-Esse modulo é responsável por obter o imagem do cardápio do site do campus (no caso: [ifrs.edu.br/sertao/assistencia-estudantil/restaurante/cardapio/](https://ifrs.edu.br/sertao/assistencia-estudantil/restaurante/cardapio/))  para tal ele usa o modulo [Puppeteer](https://www.npmjs.com/package/puppeteer) desse modo:
+O processo começa quando o `ImgGeter` usa a API json do WordPress para pesquisar imagens com o nome 'cardapio' e pegando o primeiro resultado e fazendo o download
+[Acesse o arquivo original](blob/master/src/ImgGet.js "/src/ImgGet.js")
 ```javascript
-const puppeteer =  require('puppeteer');
-const fs =  require('fs');
-const  ImgGet  = () =>  new  Promise(async(re,err)=>{ // inicia uma promise (função asincrona)
-	const browser =  await puppeteer.launch(); 
-	const page =  await browser.newPage();
-	await page.goto('https://ifrs.edu.br/sertao/assistencia-estudantil/restaurante/cardapio/');
-	var imgsrc =  await page.evaluate("document.querySelector('body > section > div > div.col-12.col-lg-10 > main > article > div:nth-child(3) > div > div > p > img').src;");
-	viewSource =  await page.goto(imgsrc); // acessa o caminho absoluto da imagem
-	fs.writeFile("./img/original/img.jpg", await viewSource.buffer(),  err => {
-		console.log("Cardapio.jpg was saved!");
-		re(); // resove a promise
-	});
-	browser.close();
-});
-module.exports.ImgGet = ImgGet; // Exporta o modulo
+module.exports.ImgGet = ()=> new Promise((re,err)=>{
+request("https://ifrs.edu.br/sertao/wp-json/wp/v2/media?search=cardapio", function (error, response, body) {
+   download(JSON.parse(body)[0].guid.rendered, './img/original/img.jpg', () => re(JSON.parse(body)[0].guid.rendered))
+	})
+})
 ```
 # Croper
 Esse modulo é responsável por cortar a imagem original em pequenas imagens para facilitar o trabalho do ocr (recognizer) para isso é usado o modulo [Jimp](https://www.npmjs.com/package/jimp) desse modo:
@@ -215,32 +206,4 @@ function  GetText(refN, dayN){
 	return tex
 }
 server.listen(port); // inicia o server padrão
-```
-
-### Cron
-Utiliza o [Node-cron](https://www.npmjs.com/package/node-cron) para agendar os post
-```javascript
-//require tudo
-
-cron.schedule('30 6 * * 1', async () => {
-	await  ImgGet()
-	await  croper();
-	await  recognize();
-	const prev =  await  GetWeather();
-	await  PostImg(`Bom dia!\n
-		prontos pra mais uma semana?\n
-		essa é a previsão do tempo para essa semana:\n
-		${prev}\n
-		E como sempre o cardapio dessa semana:
-		`,
-		'/original/img.jpg'
-	) 
-});
-// Almoço
-cron.schedule('30 11 * * 1-5', () => {
-	Post(
-	`${ref[0]} - ${days[dateFormat('',"N")-1]}  ${dateFormat('', "d/mm")}\n
-	${GetText(0, dateFormat('',"N")-1)}`
-	)
-});
 ```
