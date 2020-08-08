@@ -55,8 +55,9 @@ Usa o [cron-job.org](https://cron-job.org/) para agendar os posts
     res.end();
 });
 ```
+--------------------------------------------------------------------------------------------------------------
 
-## ImgGeter
+# ImgGeter
 
 O processo começa quando o `ImgGeter` usa a API json do WordPress para pesquisar imagens com o nome 'cardapio' e pegando o primeiro resultado e fazendo o download
 [Acesse o arquivo original](blob/master/src/ImgGet.js "/src/ImgGet.js")
@@ -67,6 +68,9 @@ request("https://ifrs.edu.br/sertao/wp-json/wp/v2/media?search=cardapio", functi
 	})
 })
 ```
+
+--------------------------------------------------------------------------------------------------------------
+
 # Croper
 Esse modulo é responsável por cortar a imagem original em pequenas imagens para facilitar o trabalho do ocr (recognizer) para isso é usado o modulo [Jimp](https://www.npmjs.com/package/jimp) desse modo:
 ```javascript
@@ -93,6 +97,9 @@ const  croop  = (name, x, y, w) =>  new  Promise((re,err) =>{
 	setTimeout(() =>  re(), 0) // aguarda 0 milissegundos e resolve a promisse (não me pergunte pq tem q "esperar" 0 milissegundos)
 });
 ```
+
+--------------------------------------------------------------------------------------------------------------
+
 # Recognizer
 Esse modulo é responsável  por reconhecer os caracteres nas imagens cortadas usando o modulo [node-tesseract-ocr](https://www.npmjs.com/package/node-tesseract-ocr) desse modo:
 ```javascript
@@ -149,6 +156,9 @@ for(var i =  0; i<fil.length; i++){
 return fil;
 }
 ```
+
+--------------------------------------------------------------------------------------------------------------
+
 # GetWeather
 De longe o modulo mais simples ele utiliza o modulo [Request](https://www.npmjs.com/package/request) que consulta a api [hgbrasil.com/status/weather](https://hgbrasil.com/status/weather) desse modo:
 ```javascript
