@@ -13,7 +13,6 @@ Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
 
 # indice
 ### módulos
-O bot é dividido em 4 módulos:
 
 - [ImgGeter](#ImgGeter) 
 - [Croper](#Croper)
@@ -25,9 +24,40 @@ O bot é dividido em 4 módulos:
 - [twitterTimeline](#twitterTimeline)
 - [Telegram.js](#Telegram)
 
-Esses módulos podem ser orquestrados de duas formas:
+--------------------------------------------------------------------------------------------------------------
 
-- [orquestrador-web](#web)
+
+# Orquestrador
+
+Usa o [cron-job.org](https://cron-job.org/) para agendar os posts
+
+![Capturar](https://user-images.githubusercontent.com/54213349/80440021-33b77600-88de-11ea-9293-5d3ec17a6fde.PNG)
+
+
+```javascript
+ app.get('/new/'+process.env.SECRET_TOKEN,async (req, res) => {
+    res.write('');
+    const imgLink = await ImgGet()
+    await crop();
+    await recognize();
+    const prev = await GetWeather();
+    const message =`Bom dia!\nprontos pra mais uma semana?\nessa é a previsão do tempo para essa semana:\n${prev}\nE como sempre o cardapio dessa semana:`
+    await PostImg(message,'./img/original/img.jpg') 
+    res.write(message); 
+    res.end();
+
+    await SendMessage(message);
+    await sendPhoto(imgLink);
+   });
+ app.get('/almoco/'+process.env.SECRET_TOKEN,async (req, res) => {
+    const message = `${ref[0]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n`+
+                    `${GetText(0, dateFormat('',"N")-1)}`
+    await Post(message)
+    await SendMessage(message);
+    res.write(message); 
+    res.end();
+});
+```
 
 ## ImgGeter
 
@@ -149,61 +179,4 @@ ConditionToEmoji = {
 	"fog":  "☁️☁️",
 	"cloudly_night":  "☁️🌙"
 }
-```
-# Orquestradores
-### web
-Utiliza o http e o express para fazer um servidor padrão e dispara as funções conforme a rota acessada e agenda os posts com o [cron-job.org](https://cron-job.org/)
-
-![Capturar](https://user-images.githubusercontent.com/54213349/80440021-33b77600-88de-11ea-9293-5d3ec17a6fde.PNG)
-
-
-```javascript
-// require tudo
-
-const app =  express();
-const port =  process.env.PORT  ||  3333;
-app.set('port', port);
-const server = http.createServer(app);
-//rotas
-app.get('/',async (req, res) => { // não precisa de autenticação
-	return res.json( JSON.parse(fs.readFileSync('cardapio.json').toString()) );
-});
-
-app.get('/new/'+process.env.SECRET_TOKEN,async (req, res) => {
-	res.write('');
-	await  ImgGet()
-	await  crop();
-	await  recognize();
-	const prev =  await  GetWeather();
-	await  PostImg(
-					`Bom dia!
-					prontos pra mais uma semana?
-					essa é a previsão do tempo para essa semana:
-					${prev}
-					E como sempre o cardapio dessa semana:`
-					,'./img/original/img.jpg'
-				)
-	res.end();
-});
-
-app.get('/almoco/'+process.env.SECRET_TOKEN,async (req, res) => {
-	Post(
-	`${ref[0]} - ${days[dateFormat('',"N")-1]}  ${dateFormat('', "d/mm")}\n
-	${GetText(0, dateFormat('',"N")-1)}`
-	)
-res.write('');
-res.end();
-});
-// o mesmo se repete para a janta
-
-function  GetText(refN, dayN){
-	var data =  JSON.parse(fs.readFileSync('cardapio.json').toString())
-	var tex =  '';
-	for(var i =  0; i<data[ref[refN]][days[dayN]].length; i++){
-		tex += data[ref[refN]][days[dayN]][i]+'\n'
-		// ex: data.almoço.segunda = []
-	}
-	return tex
-}
-server.listen(port); // inicia o server padrão
 ```
