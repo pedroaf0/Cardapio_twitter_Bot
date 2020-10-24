@@ -27,9 +27,7 @@ module.exports.recognize = async function recognize() {
 
 async function recognizee(name){
   var t;
-  console.log(`./img/croped/${name}.jpg`)
-  console.log(resolve(`./img/croped/${name}.jpg`))
- await tesseract.recognize(resolve(`./img/croped/${name}.jpg`), {lang: "eng",oem: 1,psm: 3})
+ await tesseract.recognize(resolve(`./img/croped/${name}.jpg`), {lang: "eng",oem: 3,psm: 3})
   .then(text => {
      t = corrigir(text)
     })
@@ -38,8 +36,10 @@ async function recognizee(name){
 
 
   function corrigir(text){
+    // 1ª Etapa: transformar o texto bruto em um array de strings
     const r = text.split("\r\n")
-    
+
+    // 2ª Etapa: excluir strings sem conteudo
     const fil = r.filter(v =>  {
       for(var i = 0; i<excluir.length; i++){
         if(ss.compareTwoStrings(v, excluir[i]) > 0.3){
@@ -48,28 +48,31 @@ async function recognizee(name){
       }
       return true
     });
-    const por = [0.9,0.5,0.3,0.2,0.1];
-    var t = [];
-for (var p = 0; p < por.length; p++) {
-  comparepor(fil , por[p]);
-}
-    function comparepor(fil, por) {
-      for (var i = 0; i < fil.length; i++) {
-        if (compareateachar(fil[i], por)) {
-          t.push(compareateachar(fil[i], por));
-          fil.splice(i, 1);
-          i--;
-        }
-      }
-    }
 
-    function compareateachar(fil, por) {
-      for (var v = 0; v < esperado.length; v++) {
-        if (ss.compareTwoStrings(fil, esperado[v]) > por) {
-          return esperado[v];
-        }
-      }
-      return false;
+    // 3ª etapa: achar a palavra mais parecida e sobre escrever no banco 
+    for (let index = 0; index < fil.length; index++) {
+      var palavra = fil[index];
+
+        var valorDaMaiorPalavra = 0;
+        var valorDaPalavraAtual = 0;
+        var palavraCerta = "";
+        var resultado = "";
+
+          for (let indexInterno = 0; indexInterno < esperado.length; indexInterno++) {
+            var palavraCerta = esperado[indexInterno];
+
+            var valorDaPalavraAtual = ss.compareTwoStrings(palavra, palavraCerta);
+
+            if (valorDaPalavraAtual > valorDaMaiorPalavra) {
+                
+                valorDaMaiorPalavra = valorDaPalavraAtual;
+                resultado = palavraCerta;
+ 
+            }
+            
+          }
+        fil[index] = resultado;
+      
     }
-    return t;
+    return fil;
   }
