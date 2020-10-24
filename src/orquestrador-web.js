@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const http = require("http");
 const express = require("express");
 const fs = require('fs');
@@ -55,7 +57,8 @@ app.get('/',async (req, res) => {
 app.get('/janta/'+process.env.SECRET_TOKEN,async (req, res) => {
     const message = `${ref[1]} - ${days[dateFormat('',"N")-1]} ${dateFormat('', "d/mm")}\n`+
                     `${GetText(1, dateFormat('',"N")-1)}`
-    Post(message)
+    await Post(message);
+    await SendMessage(message);
     res.write(message); 
     res.end();
 });
