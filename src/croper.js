@@ -19,7 +19,9 @@ const croop = (name, x, y, w) => new Promise((re,err) =>{
  Jimp.read('img/original/img.jpg', (err, img) => {
     if (err) throw err;
     img
-      .crop( x, y, 153, w )  
+      .crop( x, y, 153, w ) 
+      .contrast(1) 
+      .greyscale()
       .write(`img/croped/${name}.jpg`); // save
   })
   setTimeout(() => re(), 0) // é assim e é pq é, se não acredita em mim tira e veja o erro
