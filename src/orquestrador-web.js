@@ -34,8 +34,8 @@ app.get('/',async (req, res) => {
  app.get('/new/'+process.env.SECRET_TOKEN,async (req, res) => {
     res.write('');
     const imgLink = await ImgGet()
-    await crop();
-    await recognize();
+    // await crop();
+    // await recognize();
     const prev = await GetWeather();
     const message =`Bom dia!\nprontos pra mais uma semana?\nessa é a previsão do tempo para essa semana:\n${prev}\nE como sempre o cardapio dessa semana:`
     await PostImg(message,'./img/original/img.jpg') 
