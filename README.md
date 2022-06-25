@@ -2,11 +2,15 @@
  <h1 align="center">  Cardapio-Bot </h1>
 
 <p align="center">
-  <a href="https://twitter.com/Cardapio_IF_bot">
+	<a href="https://twitter.com/Cardapio_IF_bot">
     <img src='https://img.shields.io/twitter/url?label=%40Cardapio_IF_bot&url=https%3A%2F%2Ftwitter.com%2FCardapio_IF_bot'></img>
   </a>
   <img src="https://img.shields.io/badge/heroku-success-green?logo=heroku"></img> <br>
-Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.
+Bot que posta semanalmente o cardápio do refeitório do IFRS campus sertão.<br><br>
+	<img src='https://user-images.githubusercontent.com/54213349/175790918-e32df7f6-6684-445d-b883-bd4a595194c7.jpg'>
+<br>	
+
+  
 </p>
 
 # Módulos
